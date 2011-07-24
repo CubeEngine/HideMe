@@ -1,0 +1,18 @@
+name: HideMe
+main: de.codeinfection.quickwango.HideMe.HideMe
+version: "${project.version}"
+author: "Quick_Wango"
+depend: []
+commands:
+  hide:
+    usage: "/<command> [playername]"
+    description: "Hides the player."
+  unhide:
+    usage: "/<command> [playername]"
+    description: "Unhides the player."
+  seehiddens:
+    usage: "/<command>"
+    description: "Unhides all hidden players for you."
+  listhiddens:
+    usage: "/<command>"
+    description: "List all hidden players."
