@@ -1,5 +1,9 @@
 package de.codeinfection.quickwango.HideMe;
 
+import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
+import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.HideCommand;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import java.io.File;
@@ -16,8 +20,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
