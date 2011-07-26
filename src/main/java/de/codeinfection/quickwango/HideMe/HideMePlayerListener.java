@@ -29,10 +29,18 @@ public class HideMePlayerListener extends PlayerListener
             return;
         }
         Player player = event.getPlayer();
-        for (Player current : HideMe.hiddenPlayers)
+        if (this.plugin.isHidden(player))
         {
-            HideMe.removePlayerEntity(player, current);
-            current.sendMessage(event.getJoinMessage());
+            event.setJoinMessage(null);
+        }
+        for (Player hidden : this.plugin.getHiddens())
+        {
+            hidden.sendMessage(event.getJoinMessage());
+        }
+
+        if (this.plugin.countHiddens() > 1)
+        {
+            this.plugin.activateHider();
         }
     }
 
@@ -44,10 +52,9 @@ public class HideMePlayerListener extends PlayerListener
             return;
         }
         Player player = event.getPlayer();
-        if (HideMe.hiddenPlayers.contains(player))
+        if (this.plugin.isHidden(player))
         {
-            HideMe.hiddenPlayers.remove(player);
-            for (Player current : HideMe.canSeeHiddens)
+            for (Player current : this.plugin.canSeeHiddens)
             {
                 current.sendMessage(event.getQuitMessage());
             }
@@ -55,17 +62,22 @@ public class HideMePlayerListener extends PlayerListener
         }
         else
         {
-            for (Player current : HideMe.hiddenPlayers)
+            for (Player hidden : this.plugin.getHiddens())
             {
-                current.sendMessage(event.getQuitMessage());
+                hidden.sendMessage(event.getQuitMessage());
             }
+        }
+
+        if (this.plugin.countHiddens() < 1)
+        {
+            this.plugin.deactivateHider();
         }
     }
 
     @Override
     public void onPlayerPickupItem(PlayerPickupItemEvent event)
     {
-        if (HideMe.hiddenPlayers.contains(event.getPlayer()))
+        if (this.plugin.isHidden(event.getPlayer()))
         {
             event.setCancelled(true);
         }
@@ -76,13 +88,13 @@ public class HideMePlayerListener extends PlayerListener
     {
         Player player = event.getPlayer();
         Set<Player> recipients = event.getRecipients();
-        if (HideMe.canSeeHiddens.contains(player))
+        if (this.plugin.canSeeHiddens.contains(player))
         {
             recipients.add(player);
         }
         else
         {
-            recipients.addAll(HideMe.hiddenPlayers);
+            recipients.addAll(this.plugin.getHiddens());
         }
     }
 }

@@ -1,11 +1,11 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -13,10 +13,10 @@ import org.bukkit.plugin.Plugin;
  */
 public class ListhiddensCommand implements CommandExecutor
 {
-    protected final Plugin plugin;
+    protected final HideMe plugin;
 
     
-    public ListhiddensCommand(Plugin plugin)
+    public ListhiddensCommand(HideMe plugin)
     {
         this.plugin = plugin;
     }
@@ -29,7 +29,7 @@ public class ListhiddensCommand implements CommandExecutor
             return true;
         }
 
-        int hiddenPlayerCount = HideMe.hiddenPlayers.size();
+        int hiddenPlayerCount = this.plugin.countHiddens();
         if (hiddenPlayerCount == 0)
         {
             sender.sendMessage("There are no hidden players!");
@@ -37,14 +37,15 @@ public class ListhiddensCommand implements CommandExecutor
         }
 
         StringBuilder message = new StringBuilder();
+        List<Player> hiddenPlayers = this.plugin.getHiddens();
         message.append("Hidden players: ");
-        message.append(HideMe.hiddenPlayers.get(0).getName());
+        message.append(hiddenPlayers.get(0).getName());
         if (hiddenPlayerCount > 1)
         {
             for (int i = 1; i < hiddenPlayerCount; ++i)
             {
                 message.append(", ");
-                message.append(HideMe.hiddenPlayers.get(i).getName());
+                message.append(hiddenPlayers.get(i).getName());
             }
         }
         sender.sendMessage(message.toString());

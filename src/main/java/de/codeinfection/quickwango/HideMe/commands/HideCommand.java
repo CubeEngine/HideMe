@@ -7,18 +7,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 /**
  *
  * @author CodeInfection
  */
 public class HideCommand implements CommandExecutor
 {
-    protected final Plugin plugin;
+    protected final HideMe plugin;
     protected final Server server;
 
     
-    public HideCommand(Plugin plugin)
+    public HideCommand(HideMe plugin)
     {
         this.plugin = plugin;
         this.server = plugin.getServer();
@@ -54,31 +53,28 @@ public class HideCommand implements CommandExecutor
             }
         }
         
-        if (HideMe.hasPermission(target, "HideMe.hide"))
+        if (sender == target && !HideMe.hasPermission(target, "HideMe.hide"))
         {
-            if (!HideMe.hiddenPlayers.contains(target))
+            target.sendMessage(ChatColor.RED + "You are not allowed to hide!");
+            return true;
+        }
+        
+        if (!this.plugin.isHidden(target))
+        {
+            this.plugin.hide(target);
+            target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
+            if (target != sender)
             {
-                if (HideMe.hide(target))
-                {
-                    target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
-                    if (target != sender)
-                    {
-                        sender.sendMessage(ChatColor.GREEN + "He should now be completely hidden!");
-                    }
-                }
-                else
-                {
-                    target.sendMessage(ChatColor.RED + "Failed to hide you!");
-                }
-            }
-            else
-            {
-                target.sendMessage("You are already hidden!");
+                sender.sendMessage(ChatColor.GREEN + "He should now be completely hidden!");
             }
         }
         else
         {
-            target.sendMessage("You are not allowed to hide!");
+            target.sendMessage(ChatColor.RED + "You are already hidden!");
+            if (target != sender)
+            {
+                sender.sendMessage(ChatColor.RED + "He is already hidden!");
+            }
         }
         return true;
     }

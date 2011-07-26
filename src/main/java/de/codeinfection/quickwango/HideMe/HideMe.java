@@ -25,33 +25,44 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.scheduler.BukkitScheduler;
 
 public class HideMe extends JavaPlugin
 {
     protected static final Logger log = Logger.getLogger("Minecraft");
     public static boolean debugMode = true;
 
-    public final static ArrayList<Player> hiddenPlayers = new ArrayList<Player>();
-    public final static ArrayList<Player> canSeeHiddens = new ArrayList<Player>();
+    protected final ArrayList<Player> hiddenPlayers = new ArrayList<Player>();
+    public final ArrayList<Player> canSeeHiddens = new ArrayList<Player>();
     protected static PermissionHandler permissionHandler = null;
     
-    protected static Server server;
-    protected static ServerConfigurationManager mojangServer;
+    public Server server;
+    public CraftServer cserver;
+    public ServerConfigurationManager mojangServer;
     protected PluginManager pm;
     protected Configuration config;
     protected File dataFolder;
+    protected BukkitScheduler scheduler;
+    protected Hider hider;
+    protected final int hideInterval = 10;
+
+    protected int hiderTaskId;
 
     public HideMe()
     {
+        this.hiderTaskId = -1;
     }
 
     public void onEnable()
     {
-        server = this.getServer();
-        mojangServer = ((CraftServer)server).getHandle();
-        this.pm = server.getPluginManager();
+        this.server = this.getServer();
+        this.cserver = (CraftServer)this.server;
+        this.mojangServer = this.cserver.getHandle();
+        this.pm = this.server.getPluginManager();
         this.config = this.getConfiguration();
         this.dataFolder = this.getDataFolder();
+        this.scheduler = this.server.getScheduler();
+        this.hider = new Hider(this, mojangServer, cserver);
 
         this.dataFolder.mkdirs();
         // Create default config if it doesn't exist.
@@ -78,11 +89,14 @@ public class HideMe extends JavaPlugin
         this.pm.registerEvent(Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Highest, this);
         this.pm.registerEvent(Type.PLAYER_CHAT, playerListener, Priority.Lowest, this);
 
+        this.activateHider();
+
         System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
 
     public void onDisable()
     {
+        this.scheduler.cancelTasks(this);
         System.out.println(this.getDescription().getName() + " Disabled");
     }
 
@@ -94,6 +108,35 @@ public class HideMe extends JavaPlugin
     private void defaultConfig()
     {
         this.config.save();
+    }
+
+    protected boolean activateHider()
+    {
+        if (this.hiderTaskId < 0 && this.hiddenPlayers.size() > 0)
+        {
+            this.hiderTaskId = this.scheduler.scheduleAsyncRepeatingTask(this, this.hider, 0, hideInterval);
+            log("Activated the HiderTask");
+            return (this.hiderTaskId > -1);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public boolean deactivateHider()
+    {
+        if (this.hiderTaskId > -1)
+        {
+            this.scheduler.cancelTask(this.hiderTaskId);
+            this.hiderTaskId = -1;
+            log("Deactivated the HiderTask");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public static void log(String msg)
@@ -124,30 +167,30 @@ public class HideMe extends JavaPlugin
         return (player.isOp() || (permissionHandler != null && permissionHandler.has(player, permission)));
     }
 
-    public static void addPlayerEntity(String toHide, String hideFrom)
+    public void addPlayerEntity(String toHide, String hideFrom)
     {
-        Player playerToHide = server.getPlayer(toHide);
-        Player hideFromPlayer = server.getPlayer(hideFrom);
+        Player playerToHide = this.server.getPlayer(toHide);
+        Player hideFromPlayer = this.server.getPlayer(hideFrom);
         if (playerToHide == null || hideFromPlayer == null)
         {
             return;
         }
-        addPlayerEntity(playerToHide, hideFromPlayer);
+        this.addPlayerEntity(playerToHide, hideFromPlayer);
     }
-    public static void addPlayerEntity(Player toHide, Player hideFrom)
+    public void addPlayerEntity(Player toHide, Player hideFrom)
     {
-        addPlayerEntity((CraftPlayer)toHide, (CraftPlayer)hideFrom);
+        this.addPlayerEntity((CraftPlayer)toHide, (CraftPlayer)hideFrom);
     }
-    public static void addPlayerEntity(CraftPlayer toHide, CraftPlayer hideFrom)
+    public void addPlayerEntity(CraftPlayer toHide, CraftPlayer hideFrom)
     {
-        addPlayerEntity(toHide.getHandle(), hideFrom.getHandle());
+        this.addPlayerEntity(toHide.getHandle(), hideFrom.getHandle());
     }
-    public static void addPlayerEntity(EntityPlayer toHide, EntityPlayer hideFrom)
+    public void addPlayerEntity(EntityPlayer toHide, EntityPlayer hideFrom)
     {
         hideFrom.netServerHandler.sendPacket(new Packet20NamedEntitySpawn(toHide));
     }
 
-    public static void removePlayerEntity(String toHide, String hideFrom)
+    public void removePlayerEntity(String toHide, String hideFrom)
     {
         Player playerToHide = server.getPlayer(toHide);
         Player hideFromPlayer = server.getPlayer(hideFrom);
@@ -155,38 +198,38 @@ public class HideMe extends JavaPlugin
         {
             return;
         }
-        removePlayerEntity(playerToHide, hideFromPlayer);
+        this.removePlayerEntity(playerToHide, hideFromPlayer);
     }
-    public static void removePlayerEntity(Player toHide, Player hideFrom)
+    public void removePlayerEntity(Player toHide, Player hideFrom)
     {
-        removePlayerEntity((CraftPlayer)toHide, (CraftPlayer)hideFrom);
+        this.removePlayerEntity((CraftPlayer)toHide, (CraftPlayer)hideFrom);
     }
-    public static void removePlayerEntity(CraftPlayer toHide, CraftPlayer hideFrom)
+    public void removePlayerEntity(CraftPlayer toHide, CraftPlayer hideFrom)
     {
-        removePlayerEntity(toHide.getHandle(), hideFrom.getHandle());
+        this.removePlayerEntity(toHide.getHandle(), hideFrom.getHandle());
     }
-    public static void removePlayerEntity(EntityPlayer toHide, EntityPlayer hideFrom)
+    public void removePlayerEntity(EntityPlayer toHide, EntityPlayer hideFrom)
     {
         hideFrom.netServerHandler.sendPacket(new Packet29DestroyEntity(toHide.id));
     }
 
 
-    public static boolean hide(Player player)
+    public void hide(Player player)
     {
         EntityPlayer playerEntity = ((CraftPlayer)player).getHandle();
-        mojangServer.players.remove(playerEntity);
+        this.mojangServer.players.remove(playerEntity);
 
-        try
+        /*try
         {
             for (EntityPlayer current : (List<EntityPlayer>)mojangServer.players)
             {
-                if (!canSeeHiddens.contains(current.netServerHandler.getPlayer()))
+                if (!this.canSeeHiddens.contains(current.netServerHandler.getPlayer()))
                 {
                     removePlayerEntity(playerEntity, current);
                 }
             }
 
-            for (Player current : HideMe.hiddenPlayers)
+            for (Player current : this.hiddenPlayers)
             {
                 if (!canSeeHiddens.contains(current))
                 {
@@ -202,48 +245,68 @@ public class HideMe extends JavaPlugin
             // Readd the player on failure
             mojangServer.players.add(playerEntity);
             return false;
-        }
+        }*/
 
         FakePlayerQuitEvent playerQuit = new FakePlayerQuitEvent(player, ChatColor.YELLOW + player.getName() + " left the game.");
-        server.getPluginManager().callEvent(playerQuit);
-        server.broadcastMessage(String.valueOf(playerQuit.getQuitMessage()));
+        this.server.getPluginManager().callEvent(playerQuit);
+        this.server.broadcastMessage(String.valueOf(playerQuit.getQuitMessage()));
 
-        hiddenPlayers.add(player);
-        return true;
+        this.addHidden(player);
     }
 
-    public static boolean unhide(Player player)
+    public void unhide(Player player)
     {
         EntityPlayer playerEntity = ((CraftPlayer)player).getHandle();
-        boolean result = true;
 
         FakePlayerJoinEvent playerJoin = new FakePlayerJoinEvent(player, ChatColor.YELLOW + player.getName() + " joined the game.");
-        server.getPluginManager().callEvent(playerJoin);
-        server.broadcastMessage(String.valueOf(playerJoin.getJoinMessage()));
+        this.server.getPluginManager().callEvent(playerJoin);
+        this.server.broadcastMessage(String.valueOf(playerJoin.getJoinMessage()));
 
-        hiddenPlayers.remove(player);
+        this.removeHidden(player);
 
-        try
+        for (EntityPlayer current : (List<EntityPlayer>)mojangServer.players)
         {
-            for (EntityPlayer current : (List<EntityPlayer>)mojangServer.players)
-            {
-                current.netServerHandler.sendPacket(new Packet20NamedEntitySpawn(playerEntity));
-            }
-
-            for (Player current : hiddenPlayers)
-            {
-                if (current != player && !canSeeHiddens.contains(current))
-                {
-                    addPlayerEntity(playerEntity, ((CraftPlayer)current).getHandle());
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            result = false;
+            current.netServerHandler.sendPacket(new Packet20NamedEntitySpawn(playerEntity));
         }
 
-        mojangServer.players.add(playerEntity);
-        return result;
+        for (Player current : this.hiddenPlayers)
+        {
+            if (current != player && !this.canSeeHiddens.contains(current))
+            {
+                this.addPlayerEntity(playerEntity, ((CraftPlayer)current).getHandle());
+            }
+        }
+
+        this.mojangServer.players.add(playerEntity);
+    }
+
+    public boolean isHidden(Player player)
+    {
+        return this.hiddenPlayers.contains(player);
+    }
+
+    public void addHidden(Player player)
+    {
+        this.hiddenPlayers.add(player);
+        this.activateHider();
+    }
+
+    public void removeHidden(Player player)
+    {
+        this.hiddenPlayers.remove(player);
+        if (this.countHiddens() < 1)
+        {
+            this.deactivateHider();
+        }
+    }
+
+    public List<Player> getHiddens()
+    {
+        return this.hiddenPlayers;
+    }
+
+    public int countHiddens()
+    {
+        return this.hiddenPlayers.size();
     }
 }

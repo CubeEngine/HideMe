@@ -7,18 +7,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+
 /**
  *
  * @author CodeInfection
  */
 public class UnhideCommand implements CommandExecutor
 {
-    protected final Plugin plugin;
+    protected final HideMe plugin;
     protected final Server server;
 
     
-    public UnhideCommand(Plugin plugin)
+    public UnhideCommand(HideMe plugin)
     {
         this.plugin = plugin;
         this.server = plugin.getServer();
@@ -35,7 +35,7 @@ public class UnhideCommand implements CommandExecutor
                 return true;
             }
 
-            for (Player player : HideMe.hiddenPlayers)
+            for (Player player : this.plugin.getHiddens())
             {
                 if (player.getName().equalsIgnoreCase(args[0]))
                 {
@@ -62,31 +62,23 @@ public class UnhideCommand implements CommandExecutor
             }
         }
         
-        if (HideMe.hasPermission(target, "HideMe.hide"))
+        if (sender == target && !HideMe.hasPermission(target, "HideMe.hide"))
         {
-            if (HideMe.hiddenPlayers.contains(target))
+            target.sendMessage("You are not allowed to unhide!");
+            return true;
+        }
+        if (this.plugin.isHidden(target))
+        {
+            this.plugin.unhide(target);
+            target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
+            if (target != sender)
             {
-                if (HideMe.unhide(target))
-                {
-                    target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
-                    if (target != sender)
-                    {
-                        sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
-                    }
-                }
-                else
-                {
-                    target.sendMessage(ChatColor.GREEN + "You may be invisible for others until reconnect.");
-                }
-            }
-            else
-            {
-                target.sendMessage("You are not hidden!");
+                sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
             }
         }
         else
         {
-            target.sendMessage("You are not allowed to unhide!");
+            target.sendMessage("You are not hidden!");
         }
         return true;
     }

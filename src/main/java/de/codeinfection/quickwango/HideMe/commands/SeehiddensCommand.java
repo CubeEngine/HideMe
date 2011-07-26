@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
+import java.util.List;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -9,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -17,12 +17,12 @@ import org.bukkit.plugin.Plugin;
  */
 public class SeehiddensCommand implements CommandExecutor
 {
-    protected final Plugin plugin;
+    protected final HideMe plugin;
     protected final Server server;
     protected final ServerConfigurationManager serverConfigurationManager;
 
 
-    public SeehiddensCommand(Plugin plugin)
+    public SeehiddensCommand(HideMe plugin)
     {
         this.plugin = plugin;
         this.server = plugin.getServer();
@@ -36,29 +36,30 @@ public class SeehiddensCommand implements CommandExecutor
             Player player = (Player)sender;
             if (HideMe.hasPermission(player, "HideMe.seehiddens"))
             {
-                if (!HideMe.canSeeHiddens.contains(player))
+                List<Player> hiddenPlayers = this.plugin.getHiddens();
+                if (!this.plugin.canSeeHiddens.contains(player))
                 {
-                    for (Player current : HideMe.hiddenPlayers)
+                    for (Player current : hiddenPlayers)
                     {
                         if (current != null && current != player)
                         {
-                            HideMe.addPlayerEntity(current, player);
+                            this.plugin.addPlayerEntity(current, player);
                         }
                     }
-                    HideMe.canSeeHiddens.add(player);
+                    this.plugin.canSeeHiddens.add(player);
 
                     player.sendMessage(ChatColor.GREEN + "You should now be able to see other hidden players!");
                 }
                 else
                 {
-                    for (Player current : HideMe.hiddenPlayers)
+                    /*for (Player current : hiddenPlayers)
                     {
                         if (current != null && current != player)
                         {
-                            HideMe.removePlayerEntity(current, player);
+                            this.plugin.removePlayerEntity(current, player);
                         }
-                    }
-                    HideMe.canSeeHiddens.remove(player);
+                    }*/
+                    this.plugin.canSeeHiddens.remove(player);
 
                     player.sendMessage(ChatColor.GREEN + "You shouldn't see other hidden players anymore!");
                 }
