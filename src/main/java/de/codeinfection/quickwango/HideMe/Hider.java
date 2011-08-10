@@ -3,10 +3,8 @@ package de.codeinfection.quickwango.HideMe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
