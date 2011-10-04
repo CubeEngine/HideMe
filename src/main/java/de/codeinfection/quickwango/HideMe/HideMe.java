@@ -25,6 +25,8 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.packet.PacketManager;
 import org.getspout.spoutapi.packet.listener.PacketListener;
@@ -76,6 +78,17 @@ public class HideMe extends JavaPlugin
         HideMeEntityListener entityListener = new HideMeEntityListener(this);
         
         this.pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Highest, this);
+        this.pm.registerEvent(Type.PLAYER_QUIT, new PlayerListener() {
+            @Override
+            public void onPlayerQuit(PlayerQuitEvent event)
+            {
+                if (event instanceof FakePlayerQuitEvent)
+                {
+                    return;
+                }
+                mojangServer.players.add(((CraftPlayer)event.getPlayer()).getHandle());
+            }
+        }, Priority.Lowest, this);
         this.pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Highest, this);
         this.pm.registerEvent(Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Highest, this);
         this.pm.registerEvent(Type.PLAYER_CHAT, playerListener, Priority.Lowest, this);
