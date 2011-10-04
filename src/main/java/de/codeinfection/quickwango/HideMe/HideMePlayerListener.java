@@ -28,19 +28,9 @@ public class HideMePlayerListener extends PlayerListener
         {
             return;
         }
-        Player player = event.getPlayer();
-        if (this.plugin.isHidden(player))
-        {
-            event.setJoinMessage(null);
-        }
-        for (Player hidden : this.plugin.getHiddens())
+        for (Player hidden : this.plugin.hiddenPlayers)
         {
             hidden.sendMessage(event.getJoinMessage());
-        }
-
-        if (this.plugin.countHiddens() > 1)
-        {
-            this.plugin.activateHider();
         }
     }
 
@@ -52,32 +42,28 @@ public class HideMePlayerListener extends PlayerListener
             return;
         }
         Player player = event.getPlayer();
-        if (this.plugin.isHidden(player))
+        if (this.plugin.hiddenPlayers.contains(player))
         {
             for (Player current : this.plugin.canSeeHiddens)
             {
                 current.sendMessage(event.getQuitMessage());
             }
             event.setQuitMessage(null);
+            this.plugin.hiddenPlayers.remove(player);
         }
         else
         {
-            for (Player hidden : this.plugin.getHiddens())
+            for (Player hidden : this.plugin.hiddenPlayers)
             {
                 hidden.sendMessage(event.getQuitMessage());
             }
-        }
-
-        if (this.plugin.countHiddens() < 1)
-        {
-            this.plugin.deactivateHider();
         }
     }
 
     @Override
     public void onPlayerPickupItem(PlayerPickupItemEvent event)
     {
-        if (this.plugin.isHidden(event.getPlayer()))
+        if (this.plugin.hiddenPlayers.contains(event.getPlayer()))
         {
             event.setCancelled(true);
         }
@@ -94,7 +80,7 @@ public class HideMePlayerListener extends PlayerListener
         }
         else
         {
-            recipients.addAll(this.plugin.getHiddens());
+            recipients.addAll(this.plugin.hiddenPlayers);
         }
     }
 }

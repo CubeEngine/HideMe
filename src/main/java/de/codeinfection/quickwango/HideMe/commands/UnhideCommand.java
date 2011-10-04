@@ -29,13 +29,14 @@ public class UnhideCommand implements CommandExecutor
         Player target = null;
         if (args.length > 0)
         {
-            if (sender instanceof Player && !HideMe.hasPermission((Player)sender, "HideMe.hide.others"))
+            args[0] = args[0].trim().toLowerCase();
+            if (sender instanceof Player && !((Player)sender).hasPermission("HideMe.hide.others"))
             {
                 sender.sendMessage("You are not allowed to unhide others.");
                 return true;
             }
 
-            for (Player player : this.plugin.getHiddens())
+            for (Player player : this.plugin.hiddenPlayers)
             {
                 if (player.getName().equalsIgnoreCase(args[0]))
                 {
@@ -62,12 +63,12 @@ public class UnhideCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !HideMe.hasPermission(target, "HideMe.hide"))
+        if (sender == target && !target.hasPermission("HideMe.hide"))
         {
             target.sendMessage("You are not allowed to unhide!");
             return true;
         }
-        if (this.plugin.isHidden(target))
+        if (this.plugin.hiddenPlayers.contains(target))
         {
             this.plugin.unhide(target);
             target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
@@ -75,6 +76,8 @@ public class UnhideCommand implements CommandExecutor
             {
                 sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
             }
+
+            HideMe.log("Player '" + target.getName() + "' is now visible again!");
         }
         else
         {

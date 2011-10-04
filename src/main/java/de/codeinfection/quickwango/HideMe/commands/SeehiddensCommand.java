@@ -1,7 +1,6 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
-import java.util.List;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -34,12 +33,11 @@ public class SeehiddensCommand implements CommandExecutor
         if (sender instanceof Player)
         {
             Player player = (Player)sender;
-            if (HideMe.hasPermission(player, "HideMe.seehiddens"))
+            if (player.hasPermission("HideMe.seehiddens"))
             {
-                List<Player> hiddenPlayers = this.plugin.getHiddens();
                 if (!this.plugin.canSeeHiddens.contains(player))
                 {
-                    for (Player current : hiddenPlayers)
+                    for (Player current : this.plugin.hiddenPlayers)
                     {
                         if (current != null && current != player)
                         {
@@ -48,18 +46,23 @@ public class SeehiddensCommand implements CommandExecutor
                     }
                     this.plugin.canSeeHiddens.add(player);
 
+                    HideMe.log("Player '" + player + "' can now see hidden players!");
+
                     player.sendMessage(ChatColor.GREEN + "You should now be able to see other hidden players!");
                 }
                 else
                 {
-                    /*for (Player current : hiddenPlayers)
+                    this.plugin.canSeeHiddens.remove(player);
+
+                    for (Player current : this.plugin.hiddenPlayers)
                     {
-                        if (current != null && current != player)
+                        if (current != null)
                         {
                             this.plugin.removePlayerEntity(current, player);
                         }
-                    }*/
-                    this.plugin.canSeeHiddens.remove(player);
+                    }
+
+                    HideMe.log("Player '" + player.getName() + "' can NOT see hidden players anymore!");
 
                     player.sendMessage(ChatColor.GREEN + "You shouldn't see other hidden players anymore!");
                 }

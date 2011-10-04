@@ -28,6 +28,10 @@
             <id>nexisonline-repo</id>
             <url>http://ci.nexisonline.net:8080/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>craftfire-repo</id>
+            <url>http://ci.craftfire.com/plugin/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -44,12 +48,12 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
-            <version>1.7.3</version>
+            <version>1.8.1</version>
         </dependency>
         <dependency>
-            <groupId>com.nijikokun.bukkit</groupId>
-            <artifactId>Permissions</artifactId>
-            <version>3.1.6</version>
+            <groupId>org.getspout</groupId>
+            <artifactId>spoutapi</artifactId>
+            <version>dev-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
