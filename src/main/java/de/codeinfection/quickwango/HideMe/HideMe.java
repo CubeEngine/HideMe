@@ -29,8 +29,6 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.packet.PacketManager;
-import org.getspout.spoutapi.packet.listener.PacketListener;
-import org.getspout.spoutapi.packet.standard.MCPacket;
 
 public class HideMe extends JavaPlugin
 {
