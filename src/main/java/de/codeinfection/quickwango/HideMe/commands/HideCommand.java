@@ -1,12 +1,14 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
+import de.codeinfection.quickwango.HideMe.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 /**
  *
  * @author CodeInfection
@@ -25,11 +27,11 @@ public class HideCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        Player target = null;
+        Player target;
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Player && !((Player)sender).hasPermission("HideMe.hide.others"))
+            if (sender instanceof Permissible && !Permissions.HIDE_OTHERS.isAuthorized((Permissible)sender))
             {
                 sender.sendMessage(ChatColor.RED + "You are not allowed to hide others.");
                 return true;
@@ -54,7 +56,7 @@ public class HideCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !target.hasPermission("HideMe.hide"))
+        if (sender == target && !Permissions.HIDE.isAuthorized(target))
         {
             target.sendMessage(ChatColor.RED + "You are not allowed to hide!");
             return true;
@@ -62,7 +64,7 @@ public class HideCommand implements CommandExecutor
         
         if (!this.plugin.hiddenPlayers.contains(target))
         {
-            this.plugin.hide(target);
+            this.plugin.hidePlayer(target);
             target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
             if (target != sender)
             {

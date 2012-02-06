@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.HideMe;
 
 import java.util.Set;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,10 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 /**
  *
@@ -29,8 +27,16 @@ public class HideMePlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
+        final Player playr = event.getPlayer();
         if (event instanceof FakePlayerJoinEvent)
         {
+            for (Player player : this.plugin.canSeeHiddens)
+            {
+                if (playr != player)
+                {
+                    player.sendMessage(ChatColor.YELLOW + "Player " + ChatColor.GREEN + playr + ChatColor.YELLOW + " is now visible!");
+                }
+            }
             return;
         }
         for (Player hidden : this.plugin.hiddenPlayers)
@@ -39,22 +45,54 @@ public class HideMePlayerListener implements Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void autoHide(PlayerJoinEvent event)
+    {
+        final Player player = event.getPlayer();
+        if (Permissions.HIDE_AUTO.isAuthorized(player))
+        {
+            this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                public void run() {
+                    plugin.hidePlayer(player, false);
+                }
+            }, 1L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void autoSeehiddens(PlayerJoinEvent event)
+    {
+        final Player player = event.getPlayer();
+        if (Permissions.SEEHIDDENS_AUTO.isAuthorized(player) && !plugin.canSeeHiddens.contains(player))
+        {
+            plugin.canSeeHiddens.add(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
+        Player playr = event.getPlayer();
         if (event instanceof FakePlayerQuitEvent)
         {
+            for (Player player : this.plugin.canSeeHiddens)
+            {
+                if (playr != player)
+                {
+                    player.sendMessage(ChatColor.YELLOW + "Player " + ChatColor.GREEN + playr.getName() + ChatColor.YELLOW + " is now hidden!");
+                }
+            }
             return;
         }
-        Player player = event.getPlayer();
-        if (this.plugin.hiddenPlayers.contains(player))
+        
+        if (this.plugin.hiddenPlayers.contains(playr))
         {
             for (Player current : this.plugin.canSeeHiddens)
             {
                 current.sendMessage(event.getQuitMessage());
             }
             event.setQuitMessage(null);
-            this.plugin.hiddenPlayers.remove(player);
+            this.plugin.hiddenPlayers.remove(playr);
         }
         else
         {
@@ -65,7 +103,7 @@ public class HideMePlayerListener implements Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void pluginFix(PlayerQuitEvent event)
     {
         if (event instanceof FakePlayerQuitEvent)
@@ -75,7 +113,7 @@ public class HideMePlayerListener implements Listener
         this.plugin.mojangServer.players.add(((CraftPlayer)event.getPlayer()).getHandle());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPickupItem(PlayerPickupItemEvent event)
     {
         if (this.plugin.hiddenPlayers.contains(event.getPlayer()))
@@ -84,7 +122,7 @@ public class HideMePlayerListener implements Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(PlayerChatEvent event)
     {
         Player player = event.getPlayer();
@@ -110,6 +148,15 @@ public class HideMePlayerListener implements Listener
             {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDropItem(PlayerDropItemEvent event)
+    {
+        if (!Permissions.DROP.isAuthorized(event.getPlayer()))
+        {
+            event.setCancelled(true);
         }
     }
 }

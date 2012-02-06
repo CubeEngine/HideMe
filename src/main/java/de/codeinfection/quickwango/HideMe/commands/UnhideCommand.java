@@ -1,12 +1,13 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
+import de.codeinfection.quickwango.HideMe.Permissions;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -15,13 +16,10 @@ import org.bukkit.entity.Player;
 public class UnhideCommand implements CommandExecutor
 {
     protected final HideMe plugin;
-    protected final Server server;
-
     
     public UnhideCommand(HideMe plugin)
     {
         this.plugin = plugin;
-        this.server = plugin.getServer();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -30,7 +28,7 @@ public class UnhideCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Player && !((Player)sender).hasPermission("HideMe.hide.others"))
+            if (sender instanceof Permissible && !Permissions.HIDE_OTHERS.isAuthorized((Permissible)sender))
             {
                 sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others.");
                 return true;
@@ -63,14 +61,14 @@ public class UnhideCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !target.hasPermission("HideMe.hide"))
+        if (sender == target && !Permissions.HIDE.isAuthorized(target))
         {
             target.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
             return true;
         }
         if (this.plugin.hiddenPlayers.contains(target))
         {
-            this.plugin.unhide(target);
+            this.plugin.showPlayer(target);
             target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
             if (target != sender)
             {

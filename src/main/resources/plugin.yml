@@ -2,8 +2,6 @@ name: HideMe
 main: de.codeinfection.quickwango.HideMe.HideMe
 version: "${project.version}"
 author: "Quick_Wango"
-depend:
-  - Spout
 commands:
   hide:
     usage: "/<command> [playername]"
@@ -17,6 +15,9 @@ commands:
   listhiddens:
     usage: "/<command>"
     description: "List all hidden players."
+  listseehiddens:
+    usage: "/<command>"
+    description: "List all hidden players."
 permissions:
   HideMe.*:
     description: "Allows the player to do everything"
@@ -26,15 +27,39 @@ permissions:
       HideMe.hide.others: true
       HideMe.seehiddens: true
       HideMe.listhiddens: true
+      HideMe.listseehiddens: true
+  HideMe.auto:
+    description: "Alias for all the auto permissions"
+    default: false
+    children:
+      HideMe.hide.auto: true
+      HideMe.seehiddens.auto: true
   HideMe.hide:
     description: "Allows the player to hide him self"
     default: op
+  HideMe.hide.auto:
+    description: "Players with this permission are automaticly hidden"
+    default: false
+    children:
+      HideMe.hide: true
   HideMe.hide.others:
     description: "Allows the player to hide others"
     default: op
   HideMe.seehiddens:
     description: "Allows the player to see hidden players"
     default: op
+  HideMe.seehiddens.auto:
+    descirption: "Players with this permission automaticly see other hidden players"
+    default: false
+    children:
+      HideMe.seehiddens: true
   HideMe.listhiddens:
     description: "Allows the player to list hidden players"
     default: op
+  HideMe.listseehiddens:
+    description: "Allows the player to list players who can see hiddens"
+    default: op
+  HideMe.drop:
+    description: "Allows the player to drop items"
+    default: op
+    

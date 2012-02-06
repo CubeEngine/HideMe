@@ -1,9 +1,6 @@
 package de.codeinfection.quickwango.HideMe;
 
-import de.codeinfection.quickwango.HideMe.commands.HideCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
+import de.codeinfection.quickwango.HideMe.commands.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,8 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.Packet20NamedEntitySpawn;
-import net.minecraft.server.Packet29DestroyEntity;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -53,18 +48,19 @@ public class HideMe extends JavaPlugin
         this.getCommand("unhide").setExecutor(new UnhideCommand(this));
         this.getCommand("seehiddens").setExecutor(new SeehiddensCommand(this));
         this.getCommand("listhiddens").setExecutor(new ListhiddensCommand(this));
+        this.getCommand("listseehiddens").setExecutor(new ListseehiddensCommand(this));
 
         HideMePlayerListener playerListener = new HideMePlayerListener(this);
         
         this.pm.registerEvents(playerListener, this);
 
-        System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
+        log("Version " + this.getDescription().getVersion() + " is now enabled");
     }
 
     @Override
     public void onDisable()
     {
-        System.out.println(this.getDescription().getName() + " Disabled");
+        log("Version " + this.getDescription().getVersion() + " is now disabled");
     }
 
     public static void log(String msg)
@@ -90,86 +86,43 @@ public class HideMe extends JavaPlugin
         }
     }
 
-    public void addPlayerEntity(String toHide, String to)
+    public void hidePlayer(Player player)
     {
-        Player playerToHide = this.server.getPlayer(toHide);
-        Player hideFromPlayer = this.server.getPlayer(to);
-        if (playerToHide == null || hideFromPlayer == null)
-        {
-            return;
-        }
-        this.addPlayerEntity(playerToHide, hideFromPlayer);
-    }
-    public void addPlayerEntity(Player add, Player to)
-    {
-        this.addPlayerEntity((CraftPlayer)add, (CraftPlayer)to);
-    }
-    public void addPlayerEntity(CraftPlayer add, CraftPlayer to)
-    {
-        this.addPlayerEntity(add.getHandle(), to.getHandle());
-    }
-    public void addPlayerEntity(EntityPlayer add, EntityPlayer to)
-    {
-        to.netServerHandler.sendPacket(new Packet20NamedEntitySpawn(add));
+        this.hidePlayer(player, true);
     }
 
-    public void removePlayerEntity(String remove, String from)
-    {
-        Player playerToHide = server.getPlayer(remove);
-        Player hideFromPlayer = server.getPlayer(from);
-        if (playerToHide == null || hideFromPlayer == null)
-        {
-            return;
-        }
-        this.removePlayerEntity(playerToHide, hideFromPlayer);
-    }
-    public void removePlayerEntity(Player remove, Player from)
-    {
-        this.removePlayerEntity((CraftPlayer)remove, (CraftPlayer)from);
-    }
-    public void removePlayerEntity(CraftPlayer remove, CraftPlayer from)
-    {
-        this.removePlayerEntity(remove.getHandle(), from.getHandle());
-    }
-    public void removePlayerEntity(EntityPlayer remove, EntityPlayer from)
-    {
-        from.netServerHandler.sendPacket(new Packet29DestroyEntity(remove.id));
-    }
-
-
-    public void hide(Player player)
+    public void hidePlayer(Player player, boolean message)
     {
         EntityPlayer playerEntity = ((CraftPlayer)player).getHandle();
         this.mojangServer.players.remove(playerEntity);
 
         FakePlayerQuitEvent playerQuit = new FakePlayerQuitEvent(player, ChatColor.YELLOW + player.getName() + " left the game.");
         this.server.getPluginManager().callEvent(playerQuit);
-        this.server.broadcastMessage(String.valueOf(playerQuit.getQuitMessage()));
-
-        for (EntityPlayer current : (List<EntityPlayer>)mojangServer.players)
+        if (message)
         {
-            if (!this.canSeeHiddens.contains(cserver.getPlayer(current)))
+            this.server.broadcastMessage(String.valueOf(playerQuit.getQuitMessage()));
+        }
+
+        for (Player current : server.getOnlinePlayers())
+        {
+            if (!this.canSeeHiddens.contains(current))
             {
-                this.removePlayerEntity(playerEntity, current);
+                current.hidePlayer(player);
             }
         }
 
         for (Player current : this.hiddenPlayers)
         {
-            if (current != player)
+            if (current != player && !this.canSeeHiddens.contains(current))
             {
-                EntityPlayer currentEntity = ((CraftPlayer)current).getHandle();
-                if (!this.canSeeHiddens.contains(cserver.getPlayer(currentEntity)))
-                {
-                    this.removePlayerEntity(playerEntity, currentEntity);
-                }
+                current.hidePlayer(player);
             }
         }
 
         this.hiddenPlayers.add(player);
     }
 
-    public void unhide(Player player)
+    public void showPlayer(Player player)
     {
         EntityPlayer playerEntity = ((CraftPlayer)player).getHandle();
 
@@ -179,12 +132,11 @@ public class HideMe extends JavaPlugin
 
         this.hiddenPlayers.remove(player);
 
-        for (EntityPlayer current : (List<EntityPlayer>)mojangServer.players)
+        for (Player current : server.getOnlinePlayers())
         {
-            if (!this.canSeeHiddens.contains(cserver.getPlayer(current)))
+            if (!this.canSeeHiddens.contains(current))
             {
-                this.addPlayerEntity(playerEntity, current);
-                //current.netServerHandler.sendPacket(new Packet20NamedEntitySpawn(playerEntity));
+                current.showPlayer(player);
             }
         }
 
@@ -192,7 +144,7 @@ public class HideMe extends JavaPlugin
         {
             if (current != player && !this.canSeeHiddens.contains(current))
             {
-                this.addPlayerEntity(playerEntity, ((CraftPlayer)current).getHandle());
+                current.showPlayer(player);
             }
         }
 

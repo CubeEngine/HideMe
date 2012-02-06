@@ -1,13 +1,11 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
-import net.minecraft.server.ServerConfigurationManager;
+import de.codeinfection.quickwango.HideMe.Permissions;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 
 /**
@@ -17,15 +15,10 @@ import org.bukkit.entity.Player;
 public class SeehiddensCommand implements CommandExecutor
 {
     protected final HideMe plugin;
-    protected final Server server;
-    protected final ServerConfigurationManager serverConfigurationManager;
-
 
     public SeehiddensCommand(HideMe plugin)
     {
         this.plugin = plugin;
-        this.server = plugin.getServer();
-        this.serverConfigurationManager = ((CraftServer)this.server).getHandle();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -33,7 +26,7 @@ public class SeehiddensCommand implements CommandExecutor
         if (sender instanceof Player)
         {
             Player player = (Player)sender;
-            if (player.hasPermission("HideMe.seehiddens"))
+            if (Permissions.SEEHIDDENS.isAuthorized(player))
             {
                 if (!this.plugin.canSeeHiddens.contains(player))
                 {
@@ -41,12 +34,12 @@ public class SeehiddensCommand implements CommandExecutor
                     {
                         if (current != null && current != player)
                         {
-                            this.plugin.addPlayerEntity(current, player);
+                            player.showPlayer(current);
                         }
                     }
                     this.plugin.canSeeHiddens.add(player);
 
-                    HideMe.log("Player '" + player + "' can now see hidden players!");
+                    HideMe.log("Player '" + player.getName() + "' can now see hidden players!");
 
                     player.sendMessage(ChatColor.GREEN + "You should now be able to see other hidden players!");
                 }
@@ -58,7 +51,7 @@ public class SeehiddensCommand implements CommandExecutor
                     {
                         if (current != null)
                         {
-                            this.plugin.removePlayerEntity(current, player);
+                            player.hidePlayer(current);
                         }
                     }
 
