@@ -32,7 +32,7 @@ public class UnhideCommand implements CommandExecutor
             args[0] = args[0].trim().toLowerCase();
             if (sender instanceof Player && !((Player)sender).hasPermission("HideMe.hide.others"))
             {
-                sender.sendMessage("You are not allowed to unhide others.");
+                sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others.");
                 return true;
             }
 
@@ -46,7 +46,7 @@ public class UnhideCommand implements CommandExecutor
             }
             if (target == null)
             {
-                sender.sendMessage("That player is not hidden.");
+                sender.sendMessage(ChatColor.RED + "That player is not hidden.");
                 return true;
             }
         }
@@ -58,14 +58,14 @@ public class UnhideCommand implements CommandExecutor
             }
             else
             {
-                sender.sendMessage("Only players can hide!");
+                sender.sendMessage(ChatColor.RED + "Only players can hide!");
                 return true;
             }
         }
         
         if (sender == target && !target.hasPermission("HideMe.hide"))
         {
-            target.sendMessage("You are not allowed to unhide!");
+            target.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
             return true;
         }
         if (this.plugin.hiddenPlayers.contains(target))
@@ -81,7 +81,7 @@ public class UnhideCommand implements CommandExecutor
         }
         else
         {
-            target.sendMessage("You are not hidden!");
+            target.sendMessage(ChatColor.RED + "You are not hidden!");
         }
         return true;
     }

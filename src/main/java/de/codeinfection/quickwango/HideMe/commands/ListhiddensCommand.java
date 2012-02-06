@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.HideMe.commands;
 
 import de.codeinfection.quickwango.HideMe.HideMe;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,14 +25,14 @@ public class ListhiddensCommand implements CommandExecutor
     {
         if (sender instanceof Player && !((Player)sender).hasPermission("HideMe.listhiddens"))
         {
-            sender.sendMessage("You are not allowed to list the hidden players!");
+            sender.sendMessage(ChatColor.RED + "You are not allowed to list the hidden players!");
             return true;
         }
 
         int hiddenPlayerCount = this.plugin.hiddenPlayers.size();
         if (hiddenPlayerCount == 0)
         {
-            sender.sendMessage("There are no hidden players!");
+            sender.sendMessage(ChatColor.RED + "There are no hidden players!");
             return true;
         }
 

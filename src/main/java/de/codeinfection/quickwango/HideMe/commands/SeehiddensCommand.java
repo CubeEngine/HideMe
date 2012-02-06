@@ -69,12 +69,12 @@ public class SeehiddensCommand implements CommandExecutor
             }
             else
             {
-                player.sendMessage("You are not allowed to see hidden players!");
+                player.sendMessage(ChatColor.RED + "You are not allowed to see hidden players!");
             }
         }
         else
         {
-            sender.sendMessage("Only players can see players!");
+            sender.sendMessage(ChatColor.RED + "Only players can see players!");
         }
         return true;
     }

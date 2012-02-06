@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.HideMe;
 
+import de.codeinfection.quickwango.HideMe.commands.HideCommand;
+import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
 import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
 import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.HideCommand;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,26 +13,18 @@ import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.minecraft.server.Packet29DestroyEntity;
-//import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.packet.PacketManager;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class HideMe extends JavaPlugin
 {
-    protected static final Logger log = Logger.getLogger("Minecraft");
+    private static Logger logger = null;
     public static boolean debugMode = true;
 
     public final List<Player> hiddenPlayers = Collections.synchronizedList(new ArrayList<Player>());
@@ -42,30 +34,20 @@ public class HideMe extends JavaPlugin
     public CraftServer cserver;
     public ServerConfigurationManager mojangServer;
     protected PluginManager pm;
-    protected Configuration config;
     protected File dataFolder;
-    protected PacketManager packetManager;
 
     public HideMe()
     {}
 
+    @Override
     public void onEnable()
     {
+        logger = this.getLogger();
         this.server = this.getServer();
         this.cserver = (CraftServer)this.server;
         this.mojangServer = this.cserver.getHandle();
         this.pm = this.server.getPluginManager();
-        this.config = this.getConfiguration();
         this.dataFolder = this.getDataFolder();
-        this.packetManager = SpoutManager.getPacketManager();
-
-        this.dataFolder.mkdirs();
-        // Create default config if it doesn't exist.
-        if (!(new File(this.dataFolder, "config.yml")).exists())
-        {
-            this.defaultConfig();
-        }
-        this.loadConfig();
 
         this.getCommand("hide").setExecutor(new HideCommand(this));
         this.getCommand("unhide").setExecutor(new UnhideCommand(this));
@@ -73,59 +55,31 @@ public class HideMe extends JavaPlugin
         this.getCommand("listhiddens").setExecutor(new ListhiddensCommand(this));
 
         HideMePlayerListener playerListener = new HideMePlayerListener(this);
-        HideMeEntityListener entityListener = new HideMeEntityListener(this);
         
-        this.pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Highest, this);
-        this.pm.registerEvent(Type.PLAYER_QUIT, new PlayerListener() {
-            @Override
-            public void onPlayerQuit(PlayerQuitEvent event)
-            {
-                if (event instanceof FakePlayerQuitEvent)
-                {
-                    return;
-                }
-                mojangServer.players.add(((CraftPlayer)event.getPlayer()).getHandle());
-            }
-        }, Priority.Lowest, this);
-        this.pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Highest, this);
-        this.pm.registerEvent(Type.PLAYER_PICKUP_ITEM, playerListener, Priority.Highest, this);
-        this.pm.registerEvent(Type.PLAYER_CHAT, playerListener, Priority.Lowest, this);
-        this.pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest, this);
-
-        // Spout PacketListener's
-        this.packetManager.addListener(20, new HideMePacketListener(this));
+        this.pm.registerEvents(playerListener, this);
 
         System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
 
+    @Override
     public void onDisable()
     {
         System.out.println(this.getDescription().getName() + " Disabled");
     }
 
-    private void loadConfig()
-    {
-        this.config.load();
-    }
-
-    private void defaultConfig()
-    {
-        this.config.save();
-    }
-
     public static void log(String msg)
     {
-        log.log(Level.INFO, "[HideMe] " + msg);
+        logger.log(Level.INFO, msg);
     }
 
     public static void error(String msg)
     {
-        log.log(Level.SEVERE, "[HideMe] " + msg);
+        logger.log(Level.SEVERE, msg);
     }
 
     public static void error(String msg, Throwable t)
     {
-        log.log(Level.SEVERE, "[HideMe] " + msg, t);
+        logger.log(Level.SEVERE, msg, t);
     }
 
     public static void debug(String msg)
