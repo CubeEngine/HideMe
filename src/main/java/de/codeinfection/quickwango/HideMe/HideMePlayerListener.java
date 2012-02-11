@@ -49,18 +49,21 @@ public class HideMePlayerListener implements Listener
         }
     }
 
-    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void autoHide(PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
         if (Permissions.HIDE_AUTO.isAuthorized(player))
         {
-            this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
-                public void run()
+            event.setJoinMessage(null);
+            for (Player current : this.plugin.getServer().getOnlinePlayers())
+            {
+                if (!this.plugin.canSeeHiddens.contains(current))
                 {
-                    plugin.hidePlayer(player, false);
+                    current.hidePlayer(player);
                 }
-            }, 1L);
+            }
+            this.plugin.mojangServer.players.remove(((CraftPlayer)player).getHandle());
         }
     }
 
