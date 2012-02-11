@@ -7,6 +7,7 @@ Version 1.1.0
 - added commands to check whether someone is hidden or can see hiddens
 - improved existing commands
 - added auto-hiding and auto-seehiddens via permissions (HideMe.*.auto, default false)
+- added prevention of pressure plates and prevent item dropping
 
 Version 1.0.0
 -------------
