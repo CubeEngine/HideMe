@@ -1,6 +1,12 @@
 package de.codeinfection.quickwango.HideMe;
 
-import de.codeinfection.quickwango.HideMe.commands.*;
+import de.codeinfection.quickwango.HideMe.commands.CanseehiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.HiddenCommand;
+import de.codeinfection.quickwango.HideMe.commands.HideCommand;
+import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.ListseehiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
+import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +52,10 @@ public class HideMe extends JavaPlugin
 
         this.getCommand("hide").setExecutor(new HideCommand(this));
         this.getCommand("unhide").setExecutor(new UnhideCommand(this));
+        this.getCommand("hidden").setExecutor(new HiddenCommand(this));
         this.getCommand("seehiddens").setExecutor(new SeehiddensCommand(this));
         this.getCommand("listhiddens").setExecutor(new ListhiddensCommand(this));
+        this.getCommand("canseehiddens").setExecutor(new CanseehiddensCommand(this));
         this.getCommand("listseehiddens").setExecutor(new ListseehiddensCommand(this));
 
         HideMePlayerListener playerListener = new HideMePlayerListener(this);

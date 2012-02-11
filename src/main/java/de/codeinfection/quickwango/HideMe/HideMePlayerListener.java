@@ -9,7 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -34,7 +38,7 @@ public class HideMePlayerListener implements Listener
             {
                 if (playr != player)
                 {
-                    player.sendMessage(ChatColor.YELLOW + "Player " + ChatColor.GREEN + playr + ChatColor.YELLOW + " is now visible!");
+                    player.sendMessage(ChatColor.YELLOW + "Player " + ChatColor.GREEN + playr.getName() + ChatColor.YELLOW + " is now visible!");
                 }
             }
             return;
@@ -45,14 +49,15 @@ public class HideMePlayerListener implements Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
     public void autoHide(PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
         if (Permissions.HIDE_AUTO.isAuthorized(player))
         {
             this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
-                public void run() {
+                public void run()
+                {
                     plugin.hidePlayer(player, false);
                 }
             }, 1L);
@@ -110,7 +115,12 @@ public class HideMePlayerListener implements Listener
         {
             return;
         }
-        this.plugin.mojangServer.players.add(((CraftPlayer)event.getPlayer()).getHandle());
+        
+        final Player player = event.getPlayer();
+        if (this.plugin.hiddenPlayers.contains(player))
+        {
+            this.plugin.mojangServer.players.add(((CraftPlayer)player).getHandle());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

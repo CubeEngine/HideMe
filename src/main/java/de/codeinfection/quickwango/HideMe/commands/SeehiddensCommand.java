@@ -57,7 +57,7 @@ public class SeehiddensCommand implements CommandExecutor
 
                     HideMe.log("Player '" + player.getName() + "' can NOT see hidden players anymore!");
 
-                    player.sendMessage(ChatColor.GREEN + "You shouldn't see other hidden players anymore!");
+                    player.sendMessage(ChatColor.RED + "You shouldn't see other hidden players anymore!");
                 }
             }
             else

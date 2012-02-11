@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -28,7 +27,7 @@ public class UnhideCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Permissible && !Permissions.HIDE_OTHERS.isAuthorized((Permissible)sender))
+            if (!Permissions.HIDE_OTHERS.isAuthorized(sender))
             {
                 sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others.");
                 return true;
@@ -60,17 +59,26 @@ public class UnhideCommand implements CommandExecutor
                 return true;
             }
         }
-        
-        if (sender == target && !Permissions.HIDE.isAuthorized(target))
+
+        if (sender == target && !Permissions.HIDE.isAuthorized(sender))
         {
-            target.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
+            sender.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
             return true;
         }
+        if (!Permissions.HIDE_OTHERS.isAuthorized(sender))
+        {
+            sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others!");
+            return true;
+        }
+        
         if (this.plugin.hiddenPlayers.contains(target))
         {
             this.plugin.showPlayer(target);
-            target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
-            if (target != sender)
+            if (target == sender)
+            {
+                target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
+            }
+            else
             {
                 sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
             }
@@ -79,7 +87,14 @@ public class UnhideCommand implements CommandExecutor
         }
         else
         {
-            target.sendMessage(ChatColor.RED + "You are not hidden!");
+            if (target == sender)
+            {
+                target.sendMessage(ChatColor.RED + "You are not hidden!");
+            }
+            else
+            {
+                target.sendMessage(ChatColor.RED + "He is not hidden!");
+            }
         }
         return true;
     }

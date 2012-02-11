@@ -13,13 +13,13 @@ import org.bukkit.permissions.Permissible;
  *
  * @author CodeInfection
  */
-public class HideCommand implements CommandExecutor
+public class CanseehiddensCommand implements CommandExecutor
 {
     protected final HideMe plugin;
     protected final Server server;
 
     
-    public HideCommand(HideMe plugin)
+    public CanseehiddensCommand(HideMe plugin)
     {
         this.plugin = plugin;
         this.server = plugin.getServer();
@@ -31,7 +31,7 @@ public class HideCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Permissible && !Permissions.HIDE_OTHERS.isAuthorized((Permissible)sender))
+            if (sender instanceof Permissible && !Permissions.HIDDEN_OTHERS.isAuthorized((Permissible)sender))
             {
                 sender.sendMessage(ChatColor.RED + "You are not allowed to hide others.");
                 return true;
@@ -56,35 +56,36 @@ public class HideCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !Permissions.HIDE.isAuthorized(sender))
+        if (sender == target && !Permissions.CANSEEHIDDENS.isAuthorized(target))
         {
-            target.sendMessage(ChatColor.RED + "You are not allowed to hide!");
+            sender.sendMessage(ChatColor.RED + "You are not allowed to check your state!");
             return true;
         }
-        
-        if (!this.plugin.hiddenPlayers.contains(target))
+        else if (!Permissions.CANSEEHIDDENS_OTHERS.isAuthorized(sender))
         {
-            this.plugin.hidePlayer(target);
+            sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
+            return true;
+        }
+        if (this.plugin.canSeeHiddens.contains(target))
+        {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
+                target.sendMessage(ChatColor.GREEN + "You CAN see hidden players");
             }
             else
             {
-                sender.sendMessage(ChatColor.GREEN + "He should now be completely hidden!");
+                sender.sendMessage(ChatColor.GREEN + "He CAN see hidden players!");
             }
-
-            HideMe.log("Player '" + target.getName() + "' is now hidden!");
         }
         else
         {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.RED + "You are already hidden!");
+                target.sendMessage(ChatColor.RED + "You can NOT see hidden players!");
             }
-            else
+            if (target != sender)
             {
-                sender.sendMessage(ChatColor.RED + "He is already hidden!");
+                sender.sendMessage(ChatColor.RED + "He can NOT see hidden players!");
             }
         }
         return true;

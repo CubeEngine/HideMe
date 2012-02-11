@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -25,7 +24,7 @@ public class ListseehiddensCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Permissible && !Permissions.LISTSEEHIDDENS.isAuthorized((Permissible)sender))
+        if (!Permissions.LISTSEEHIDDENS.isAuthorized(sender))
         {
             sender.sendMessage(ChatColor.RED + "You are not allowed to list the players who can see hiddens!");
             return true;

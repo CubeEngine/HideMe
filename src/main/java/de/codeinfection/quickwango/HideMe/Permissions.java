@@ -11,8 +11,12 @@ public enum Permissions
     HIDE("hide"),
     HIDE_AUTO("hide.auto"),
     HIDE_OTHERS("hide.others"),
+    HIDDEN("hide"),
+    HIDDEN_OTHERS("hide.others"),
     SEEHIDDENS("seehiddens"),
     SEEHIDDENS_AUTO("seehiddens.auto"),
+    CANSEEHIDDENS("canseehiddens"),
+    CANSEEHIDDENS_OTHERS("canseehiddens.others"),
     LISTHIDDENS("listhiddens"),
     LISTSEEHIDDENS("listseehiddens"),
     DROP("drop");

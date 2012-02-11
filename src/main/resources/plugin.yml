@@ -9,12 +9,18 @@ commands:
   unhide:
     usage: "/<command> [playername]"
     description: "Unhides the player."
+  hidden:
+    usage: "/<command> [playername]"
+    description: "Checks whether a player is hidden."
   seehiddens:
     usage: "/<command>"
     description: "Unhides all hidden players for you."
   listhiddens:
     usage: "/<command>"
     description: "List all hidden players."
+  canseehiddens:
+    usage: "/<command> [playername]"
+    description: "Checks whether a player can see hidden players."
   listseehiddens:
     usage: "/<command>"
     description: "List all hidden players."
@@ -45,6 +51,12 @@ permissions:
   HideMe.hide.others:
     description: "Allows the player to hide others"
     default: op
+  HideMe.hidden:
+    description: "Allows the player to check whether he is hidden"
+    default: op
+  HideMe.hidden.others:
+    description: "Allows the player check whether another player is hidden"
+    default: op
   HideMe.seehiddens:
     description: "Allows the player to see hidden players"
     default: op
@@ -53,6 +65,12 @@ permissions:
     default: false
     children:
       HideMe.seehiddens: true
+  HideMe.canseehiddens:
+    description: "Allows the player to check whether he can see hidden players"
+    default: op
+  HideMe.canseehiddens.others:
+    descirption: "Allows the player to check whether another player can see hidden players"
+    default: op
   HideMe.listhiddens:
     description: "Allows the player to list hidden players"
     default: op
