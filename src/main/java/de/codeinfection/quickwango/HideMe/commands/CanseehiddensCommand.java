@@ -56,16 +56,17 @@ public class CanseehiddensCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !Permissions.CANSEEHIDDENS.isAuthorized(target))
+        if (sender == target && !Permissions.CANSEEHIDDENS.isAuthorized(sender))
         {
             sender.sendMessage(ChatColor.RED + "You are not allowed to check your state!");
             return true;
         }
-        else if (!Permissions.CANSEEHIDDENS_OTHERS.isAuthorized(sender))
+        else if (sender != target && !Permissions.CANSEEHIDDENS_OTHERS.isAuthorized(sender))
         {
             sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
             return true;
         }
+        
         if (this.plugin.canSeeHiddens.contains(target))
         {
             if (target == sender)

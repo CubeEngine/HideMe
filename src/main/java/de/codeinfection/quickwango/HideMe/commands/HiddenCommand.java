@@ -61,11 +61,12 @@ public class HiddenCommand implements CommandExecutor
             target.sendMessage(ChatColor.RED + "You are not allowed to check your state!");
             return true;
         }
-        else if (!Permissions.HIDDEN_OTHERS.isAuthorized(sender))
+        else if (sender != target && !Permissions.HIDDEN_OTHERS.isAuthorized(sender))
         {
             sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
             return true;
         }
+        
         if (this.plugin.hiddenPlayers.contains(target))
         {
             if (target == sender)

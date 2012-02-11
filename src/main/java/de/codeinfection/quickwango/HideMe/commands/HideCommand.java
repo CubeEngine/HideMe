@@ -31,12 +31,7 @@ public class HideCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Permissible && !Permissions.HIDE_OTHERS.isAuthorized((Permissible)sender))
-            {
-                sender.sendMessage(ChatColor.RED + "You are not allowed to hide others.");
-                return true;
-            }
-            target = this.server.getPlayerExact(args[0]);
+            target = this.server.getPlayer(args[0]);
             if (target == null)
             {
                 sender.sendMessage(ChatColor.RED + "Couldn't find that player.");
@@ -61,15 +56,18 @@ public class HideCommand implements CommandExecutor
             target.sendMessage(ChatColor.RED + "You are not allowed to hide!");
             return true;
         }
+        else if (sender != target && !Permissions.HIDE_OTHERS.isAuthorized(sender))
+        {
+            sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
+            return true;
+        }
         
         if (!this.plugin.hiddenPlayers.contains(target))
         {
             this.plugin.hidePlayer(target);
-            if (target == sender)
-            {
-                target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
-            }
-            else
+            
+            target.sendMessage(ChatColor.GREEN + "You should now be completely hidden :) Have Fun");
+            if (target != sender)
             {
                 sender.sendMessage(ChatColor.GREEN + "He should now be completely hidden!");
             }
@@ -80,7 +78,7 @@ public class HideCommand implements CommandExecutor
         {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.RED + "You are already hidden!");
+                sender.sendMessage(ChatColor.RED + "You are already hidden!");
             }
             else
             {

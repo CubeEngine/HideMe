@@ -27,11 +27,6 @@ public class UnhideCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (!Permissions.HIDE_OTHERS.isAuthorized(sender))
-            {
-                sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others.");
-                return true;
-            }
 
             for (Player player : this.plugin.hiddenPlayers)
             {
@@ -65,7 +60,7 @@ public class UnhideCommand implements CommandExecutor
             sender.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
             return true;
         }
-        if (!Permissions.HIDE_OTHERS.isAuthorized(sender))
+        if (sender != target && !Permissions.HIDE_OTHERS.isAuthorized(sender))
         {
             sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others!");
             return true;
@@ -74,11 +69,9 @@ public class UnhideCommand implements CommandExecutor
         if (this.plugin.hiddenPlayers.contains(target))
         {
             this.plugin.showPlayer(target);
-            if (target == sender)
-            {
-                target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
-            }
-            else
+            
+            target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
+            if (target != sender)
             {
                 sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
             }
@@ -89,11 +82,11 @@ public class UnhideCommand implements CommandExecutor
         {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.RED + "You are not hidden!");
+                sender.sendMessage(ChatColor.RED + "You are not hidden!");
             }
             else
             {
-                target.sendMessage(ChatColor.RED + "He is not hidden!");
+                sender.sendMessage(ChatColor.RED + "He is not hidden!");
             }
         }
         return true;
