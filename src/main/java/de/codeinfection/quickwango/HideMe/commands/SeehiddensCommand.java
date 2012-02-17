@@ -62,7 +62,8 @@ public class SeehiddensCommand implements CommandExecutor
             }
             else
             {
-                player.sendMessage(ChatColor.RED + "You are not allowed to see hidden players!");
+                // actually: no permissions
+                player.sendMessage("Unknown command. Type \"help\" for help.");
             }
         }
         else

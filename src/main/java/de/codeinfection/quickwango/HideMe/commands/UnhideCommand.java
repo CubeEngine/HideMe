@@ -57,12 +57,14 @@ public class UnhideCommand implements CommandExecutor
 
         if (sender == target && !Permissions.HIDE.isAuthorized(sender))
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to unhide!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         if (sender != target && !Permissions.HIDE_OTHERS.isAuthorized(sender))
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to unhide others!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         

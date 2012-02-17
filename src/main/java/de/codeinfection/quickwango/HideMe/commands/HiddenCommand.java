@@ -31,11 +31,6 @@ public class HiddenCommand implements CommandExecutor
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-            if (sender instanceof Permissible && !Permissions.HIDDEN_OTHERS.isAuthorized((Permissible)sender))
-            {
-                sender.sendMessage(ChatColor.RED + "You are not allowed to hide others.");
-                return true;
-            }
             target = this.server.getPlayerExact(args[0]);
             if (target == null)
             {
@@ -58,12 +53,14 @@ public class HiddenCommand implements CommandExecutor
         
         if (sender == target && !Permissions.HIDDEN.isAuthorized(target))
         {
-            target.sendMessage(ChatColor.RED + "You are not allowed to check your state!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         else if (sender != target && !Permissions.HIDDEN_OTHERS.isAuthorized(sender))
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         

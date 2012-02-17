@@ -42,7 +42,8 @@ public class ListhiddensCommand implements CommandExecutor
         }
         else
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to list the hidden players!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
         }
         
         return true;

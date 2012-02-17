@@ -26,7 +26,8 @@ public class ListseehiddensCommand implements CommandExecutor
     {
         if (!Permissions.LISTSEEHIDDENS.isAuthorized(sender))
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to list the players who can see hiddens!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
 

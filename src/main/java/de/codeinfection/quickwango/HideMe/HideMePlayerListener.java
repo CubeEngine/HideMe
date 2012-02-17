@@ -115,21 +115,24 @@ public class HideMePlayerListener implements Listener
             }
             return;
         }
-        
-        if (this.plugin.hiddenPlayers.contains(playr))
+
+        if (event.getQuitMessage() != null)
         {
-            for (Player current : this.plugin.canSeeHiddens)
+            if (this.plugin.hiddenPlayers.contains(playr))
             {
-                current.sendMessage(event.getQuitMessage());
+                for (Player current : this.plugin.canSeeHiddens)
+                {
+                    current.sendMessage(event.getQuitMessage());
+                }
+                event.setQuitMessage(null);
+                this.plugin.hiddenPlayers.remove(playr);
             }
-            event.setQuitMessage(null);
-            this.plugin.hiddenPlayers.remove(playr);
-        }
-        else
-        {
-            for (Player hidden : this.plugin.hiddenPlayers)
+            else
             {
-                hidden.sendMessage(event.getQuitMessage());
+                for (Player hidden : this.plugin.hiddenPlayers)
+                {
+                    hidden.sendMessage(event.getQuitMessage());
+                }
             }
         }
     }

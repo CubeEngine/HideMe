@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
 /**
  *
  * @author CodeInfection
@@ -53,12 +52,14 @@ public class HideCommand implements CommandExecutor
         
         if (sender == target && !Permissions.HIDE.isAuthorized(sender))
         {
-            target.sendMessage(ChatColor.RED + "You are not allowed to hide!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         else if (sender != target && !Permissions.HIDE_OTHERS.isAuthorized(sender))
         {
-            sender.sendMessage(ChatColor.RED + "You are not allowed to check the state of others!");
+            // actually: no permissions
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         
