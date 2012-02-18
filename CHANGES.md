@@ -1,6 +1,10 @@
 HideMe
 =======
 
+Version 1.1.1
+-------------
+- Fixed a "null" message
+
 Version 1.1.0
 -------------
 - Reworked to use Bukkit's new Vanish API instead of SpoutPlugin
