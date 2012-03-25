@@ -1,5 +1,5 @@
 name: HideMe
-main: de.codeinfection.quickwango.HideMe.HideMe
+main: main.java.de.codeinfection.quickwango.HideMe.HideMe
 version: "${project.version}"
 author: "Quick_Wango"
 commands:
