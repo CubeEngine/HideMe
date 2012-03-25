@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.HideMe;
+package main.java.de.codeinfection.quickwango.HideMe;
 
 import java.util.Set;
 import org.bukkit.ChatColor;
@@ -137,6 +137,7 @@ public class HideMePlayerListener implements Listener
         }
     }
 
+    @SuppressWarnings("unchecked")
     @EventHandler(priority = EventPriority.LOWEST)
     public void pluginFix(PlayerQuitEvent event)
     {
