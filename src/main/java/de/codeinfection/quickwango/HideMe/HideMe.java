@@ -1,12 +1,12 @@
-package de.codeinfection.quickwango.HideMe;
+package main.java.de.codeinfection.quickwango.HideMe;
 
-import de.codeinfection.quickwango.HideMe.commands.CanseehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.HiddenCommand;
-import de.codeinfection.quickwango.HideMe.commands.HideCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListseehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.CanseehiddensCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.HiddenCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.HideCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.ListseehiddensCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
+import main.java.de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -141,6 +141,7 @@ public class HideMe extends JavaPlugin
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void showPlayer(Player player)
     {
         this.hiddenPlayers.remove(player);
