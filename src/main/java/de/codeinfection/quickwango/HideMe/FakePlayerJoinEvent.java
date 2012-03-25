@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.HideMe;
+package main.java.de.codeinfection.quickwango.HideMe;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
