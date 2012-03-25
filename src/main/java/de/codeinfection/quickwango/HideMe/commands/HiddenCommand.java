@@ -1,7 +1,7 @@
-package de.codeinfection.quickwango.HideMe.commands;
+package main.java.de.codeinfection.quickwango.HideMe.commands;
 
-import de.codeinfection.quickwango.HideMe.HideMe;
-import de.codeinfection.quickwango.HideMe.Permissions;
+import main.java.de.codeinfection.quickwango.HideMe.HideMe;
+import main.java.de.codeinfection.quickwango.HideMe.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
