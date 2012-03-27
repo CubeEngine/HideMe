@@ -3,7 +3,6 @@ package de.codeinfection.quickwango.HideMe;
 import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -81,7 +80,7 @@ public class HideMePlayerListener implements Listener
                     current.hidePlayer(player);
                 }
             }
-            this.plugin.mojangServer.players.remove(((CraftPlayer)player).getHandle());
+            this.plugin.removePlayerFromList(player);
             this.plugin.hiddenPlayers.add(player);
 
             player.sendMessage(ChatColor.GREEN + "You were automaticly hidden!");
@@ -148,7 +147,7 @@ public class HideMePlayerListener implements Listener
         final Player player = event.getPlayer();
         if (this.plugin.hiddenPlayers.contains(player))
         {
-            this.plugin.mojangServer.players.add(((CraftPlayer)player).getHandle());
+            this.plugin.addPlayerToList(player);
         }
     }
 

@@ -7,12 +7,12 @@ import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
 import de.codeinfection.quickwango.HideMe.commands.ListseehiddensCommand;
 import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
 import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -32,9 +32,8 @@ public class HideMe extends JavaPlugin
     public final List<Player> canSeeHiddens = Collections.synchronizedList(new ArrayList<Player>());
     
     public Server server;
-    public ServerConfigurationManager mojangServer;
-    protected PluginManager pm;
-    protected File dataFolder;
+    private ServerConfigurationManager mojangServer;
+    private PluginManager pm;
 
     public HideMe()
     {}
@@ -46,7 +45,6 @@ public class HideMe extends JavaPlugin
         this.server = this.getServer();
         this.mojangServer = ((CraftServer)this.server).getHandle();
         this.pm = this.server.getPluginManager();
-        this.dataFolder = this.getDataFolder();
         
         try
         {
@@ -122,7 +120,7 @@ public class HideMe extends JavaPlugin
         }
 
         this.hiddenPlayers.add(player);
-        this.mojangServer.players.remove(((CraftPlayer)player).getHandle());
+        this.removePlayerFromList(player);
 
         for (Player current : this.server.getOnlinePlayers())
         {
@@ -144,7 +142,7 @@ public class HideMe extends JavaPlugin
     public void showPlayer(Player player)
     {
         this.hiddenPlayers.remove(player);
-        this.mojangServer.players.add(((CraftPlayer)player).getHandle());
+        this.addPlayerToList(player);
 
         FakePlayerJoinEvent playerJoin = new FakePlayerJoinEvent(player, ChatColor.YELLOW + player.getName() + " joined the game.");
         this.server.getPluginManager().callEvent(playerJoin);
@@ -182,4 +180,20 @@ public class HideMe extends JavaPlugin
         }
         return null;
     }
+
+    public void addPlayerToList(final Player player)
+    {
+        final EntityPlayer entityPlayer = ((CraftPlayer)player).getHandle();
+        if (!this.mojangServer.players.contains(entityPlayer))
+        {
+            this.mojangServer.players.add(entityPlayer);
+        }
+    }
+
+    public void removePlayerFromList(final Player player)
+    {
+        this.mojangServer.players.remove(((CraftPlayer)player).getHandle());
+    }
+
+
 }
