@@ -3,7 +3,8 @@ HideMe
 
 Version 1.1.1
 -------------
-- Fixed a "null" message
+- fixed a "null" message
+- fixed the player duplication
 
 Version 1.1.0
 -------------
