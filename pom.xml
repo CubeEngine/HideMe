@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.codeinfection</groupId>
+    <groupId>de.cubeisland</groupId>
     <artifactId>HideMe</artifactId>
     <version>1.1.1-SNAPSHOT</version>
     <name>HideMe</name>
-    <url>http://code-infection.de</url>
+    <url>http://cubeisland.de</url>
     <packaging>jar</packaging>
     <description></description>
 
     <scm>
-        <connection>scm:git:git://github.com/quickwango/HideMe.git</connection>
-        <url>https://github.com/quickwango/HideMe</url>
-        <developerConnection>scm:git:git@github.com:quickwango/HideMe.git</developerConnection>
+        <connection>scm:git:git://github.com/cubeisland/HideMe.git</connection>
+        <url>https://github.com/cubeisland/HideMe</url>
+        <developerConnection>scm:git:git@github.com:cubeisland/HideMe.git</developerConnection>
     </scm>
 
     <properties>

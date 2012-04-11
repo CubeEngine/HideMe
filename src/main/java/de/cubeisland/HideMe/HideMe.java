@@ -1,12 +1,12 @@
-package de.codeinfection.quickwango.HideMe;
+package de.cubeisland.HideMe;
 
-import de.codeinfection.quickwango.HideMe.commands.CanseehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.HiddenCommand;
-import de.codeinfection.quickwango.HideMe.commands.HideCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListhiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.ListseehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.SeehiddensCommand;
-import de.codeinfection.quickwango.HideMe.commands.UnhideCommand;
+import de.cubeisland.HideMe.commands.CanseehiddensCommand;
+import de.cubeisland.HideMe.commands.HiddenCommand;
+import de.cubeisland.HideMe.commands.HideCommand;
+import de.cubeisland.HideMe.commands.ListhiddensCommand;
+import de.cubeisland.HideMe.commands.ListseehiddensCommand;
+import de.cubeisland.HideMe.commands.SeehiddensCommand;
+import de.cubeisland.HideMe.commands.UnhideCommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

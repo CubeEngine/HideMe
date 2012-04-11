@@ -1,7 +1,7 @@
-package de.codeinfection.quickwango.HideMe.commands;
+package de.cubeisland.HideMe.commands;
 
-import de.codeinfection.quickwango.HideMe.HideMe;
-import de.codeinfection.quickwango.HideMe.Permissions;
+import de.cubeisland.HideMe.HideMe;
+import de.cubeisland.HideMe.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

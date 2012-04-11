@@ -1,7 +1,7 @@
-package de.codeinfection.quickwango.HideMe.commands;
+package de.cubeisland.HideMe.commands;
 
-import de.codeinfection.quickwango.HideMe.HideMe;
-import de.codeinfection.quickwango.HideMe.Permissions;
+import de.cubeisland.HideMe.HideMe;
+import de.cubeisland.HideMe.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
  *
  * @author CodeInfection
  */
-public class CanseehiddensCommand implements CommandExecutor
+public class HiddenCommand implements CommandExecutor
 {
     protected final HideMe plugin;
     protected final Server server;
 
     
-    public CanseehiddensCommand(HideMe plugin)
+    public HiddenCommand(HideMe plugin)
     {
         this.plugin = plugin;
         this.server = plugin.getServer();
@@ -50,39 +50,39 @@ public class CanseehiddensCommand implements CommandExecutor
             }
         }
         
-        if (sender == target && !Permissions.CANSEEHIDDENS.isAuthorized(sender))
+        if (sender == target && !Permissions.HIDDEN.isAuthorized(target))
         {
             // actually: no permissions
             sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
-        else if (sender != target && !Permissions.CANSEEHIDDENS_OTHERS.isAuthorized(sender))
+        else if (sender != target && !Permissions.HIDDEN_OTHERS.isAuthorized(sender))
         {
             // actually: no permissions
             sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         
-        if (this.plugin.canSeeHiddens.contains(target))
+        if (this.plugin.hiddenPlayers.contains(target))
         {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.GREEN + "You CAN see hidden players");
+                target.sendMessage(ChatColor.GREEN + "You ARE hidden");
             }
             else
             {
-                sender.sendMessage(ChatColor.GREEN + "He CAN see hidden players!");
+                sender.sendMessage(ChatColor.GREEN + "He IS hidden!");
             }
         }
         else
         {
             if (target == sender)
             {
-                target.sendMessage(ChatColor.RED + "You can NOT see hidden players!");
+                target.sendMessage(ChatColor.RED + "You are NOT hidden!");
             }
             if (target != sender)
             {
-                sender.sendMessage(ChatColor.RED + "He can NOT see hidden players!");
+                sender.sendMessage(ChatColor.RED + "He is NOT hidden!");
             }
         }
         return true;

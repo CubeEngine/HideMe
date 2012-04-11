@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.HideMe;
+package de.cubeisland.HideMe;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;

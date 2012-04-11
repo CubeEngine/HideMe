@@ -1,44 +1,39 @@
-package de.codeinfection.quickwango.HideMe.commands;
+package de.cubeisland.HideMe.commands;
 
-import de.codeinfection.quickwango.HideMe.HideMe;
-import de.codeinfection.quickwango.HideMe.Permissions;
+import de.cubeisland.HideMe.HideMe;
+import de.cubeisland.HideMe.Permissions;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 /**
  *
  * @author CodeInfection
  */
-public class UnhideCommand implements CommandExecutor
+public class CanseehiddensCommand implements CommandExecutor
 {
     protected final HideMe plugin;
+    protected final Server server;
+
     
-    public UnhideCommand(HideMe plugin)
+    public CanseehiddensCommand(HideMe plugin)
     {
         this.plugin = plugin;
+        this.server = plugin.getServer();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        Player target = null;
+        Player target;
         if (args.length > 0)
         {
             args[0] = args[0].trim().toLowerCase();
-
-            for (Player player : this.plugin.hiddenPlayers)
-            {
-                if (player.getName().equalsIgnoreCase(args[0]))
-                {
-                    target = player;
-                    break;
-                }
-            }
+            target = this.server.getPlayerExact(args[0]);
             if (target == null)
             {
-                sender.sendMessage(ChatColor.RED + "That player is not hidden.");
+                sender.sendMessage(ChatColor.RED + "Couldn't find that player.");
                 return true;
             }
         }
@@ -54,41 +49,40 @@ public class UnhideCommand implements CommandExecutor
                 return true;
             }
         }
-
-        if (sender == target && !Permissions.HIDE.isAuthorized(sender))
+        
+        if (sender == target && !Permissions.CANSEEHIDDENS.isAuthorized(sender))
         {
             // actually: no permissions
             sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
-        if (sender != target && !Permissions.HIDE_OTHERS.isAuthorized(sender))
+        else if (sender != target && !Permissions.CANSEEHIDDENS_OTHERS.isAuthorized(sender))
         {
             // actually: no permissions
             sender.sendMessage("Unknown command. Type \"help\" for help.");
             return true;
         }
         
-        if (this.plugin.hiddenPlayers.contains(target))
+        if (this.plugin.canSeeHiddens.contains(target))
         {
-            this.plugin.showPlayer(target);
-            
-            target.sendMessage(ChatColor.GREEN + "You should now be completely visible again!");
-            if (target != sender)
+            if (target == sender)
             {
-                sender.sendMessage(ChatColor.GREEN + "He should now be completely visible again!");
+                target.sendMessage(ChatColor.GREEN + "You CAN see hidden players");
             }
-
-            HideMe.log("Player '" + target.getName() + "' is now visible again!");
+            else
+            {
+                sender.sendMessage(ChatColor.GREEN + "He CAN see hidden players!");
+            }
         }
         else
         {
             if (target == sender)
             {
-                sender.sendMessage(ChatColor.RED + "You are not hidden!");
+                target.sendMessage(ChatColor.RED + "You can NOT see hidden players!");
             }
-            else
+            if (target != sender)
             {
-                sender.sendMessage(ChatColor.RED + "He is not hidden!");
+                sender.sendMessage(ChatColor.RED + "He can NOT see hidden players!");
             }
         }
         return true;

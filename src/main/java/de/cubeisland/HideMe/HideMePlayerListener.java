@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.HideMe;
+package de.cubeisland.HideMe;
 
 import java.util.Set;
 import org.bukkit.ChatColor;
