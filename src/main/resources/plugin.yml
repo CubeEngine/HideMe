@@ -1,6 +1,8 @@
 name: HideMe
-main: de.codeinfection.quickwango.HideMe.HideMe
-version: "${project.version}"
+main: de.cubeisland.HideMe.HideMe
+version: ${project.version}
+website: http://cubeisland.de
+dev-url: http://dev.bukkit.org/server-mods/hideme
 author: "Quick_Wango"
 commands:
   hide:
