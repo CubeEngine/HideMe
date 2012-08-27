@@ -21,7 +21,7 @@ HideMe allows you to be completely invisable on your server and with completely 
 Dependencies:
 -------------
 
-- Bukkit 1.1-R4 or newer
+- Bukkit 1.3.2 or newer
 
 SpoutPlugin is ***NOT*** needed
 
@@ -58,7 +58,7 @@ Permissions:
 ***README***
 ============
 
-Plugin developed by Quick_Wango - [Parallel Universe](http://parallel-universe.de)
+Plugin developed by Quick_Wango - [Cube Island](http://cubeisland.de)
 
 - You want new features?
 - You want the plugin to be always up to date?
@@ -70,6 +70,6 @@ I'm doing this for literally nothing in my freetime, so keep me interessted in m
 
 Thanks in advance!
 
-***[Talk to the developer](http://webchat.esper.net/?channels=code-infection&nick=)*** (#code-infection on EsperNet)
+***[Talk to the developer](http://webchat.esper.net/?channels=cubeisland-dev&nick=)*** (#cubeisland-dev on EsperNet)
 
-***[Source on Github](https://github.com/quickwango/HideMe)***
+***[Source on Github](https://github.com/CubeIsland/HideMe)***

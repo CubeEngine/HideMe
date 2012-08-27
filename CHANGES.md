@@ -1,10 +1,11 @@
 HideMe
 =======
 
-Version 1.1.1
+Version 1.2.0
 -------------
 - fixed a "null" message
 - fixed the player duplication
+- updated to 1.3.2 (breaks backwards compatibility)
 
 Version 1.1.0
 -------------

@@ -7,9 +7,9 @@ import de.cubeisland.HideMe.commands.ListhiddensCommand;
 import de.cubeisland.HideMe.commands.ListseehiddensCommand;
 import de.cubeisland.HideMe.commands.SeehiddensCommand;
 import de.cubeisland.HideMe.commands.UnhideCommand;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
@@ -28,8 +28,8 @@ public class HideMe extends JavaPlugin
     private static Logger logger = null;
     public static boolean debugMode = true;
 
-    public final List<Player> hiddenPlayers = Collections.synchronizedList(new ArrayList<Player>());
-    public final List<Player> canSeeHiddens = Collections.synchronizedList(new ArrayList<Player>());
+    public final Set<Player> hiddenPlayers = Collections.synchronizedSet(new HashSet<Player>());
+    public final Set<Player> canSeeHiddens = Collections.synchronizedSet(new HashSet<Player>());
     
     public Server server;
     private ServerConfigurationManager mojangServer;
@@ -183,11 +183,7 @@ public class HideMe extends JavaPlugin
 
     public void addPlayerToList(final Player player)
     {
-        final EntityPlayer entityPlayer = ((CraftPlayer)player).getHandle();
-        if (!this.mojangServer.players.contains(entityPlayer))
-        {
-            this.mojangServer.players.add(entityPlayer);
-        }
+        this.mojangServer.players.add(((CraftPlayer)player).getHandle());
     }
 
     public void removePlayerFromList(final Player player)
