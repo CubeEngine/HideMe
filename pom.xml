@@ -7,13 +7,20 @@
     <name>HideMe</name>
     <url>http://cubeisland.de</url>
     <packaging>jar</packaging>
-    <description></description>
-
-    <scm>
-        <connection>scm:git:git://github.com/cubeisland/HideMe.git</connection>
-        <url>https://github.com/cubeisland/HideMe</url>
-        <developerConnection>scm:git:git@github.com:cubeisland/HideMe.git</developerConnection>
-    </scm>
+    <description>Allows players to completly hide from other players.</description>
+    
+    <distributionManagement>
+        <repository>
+            <id>cubeisland-repo</id>
+            <name>Release</name>
+            <url>http://cubeisland.de:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>cubeisland-repo</id>
+            <name>Release</name>
+            <url>http://cubeisland.de:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,8 +28,8 @@
   
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>cubeisland-repo</id>
+            <url>http://repo.cubeisland.de/</url>
         </repository>
     </repositories>
 
