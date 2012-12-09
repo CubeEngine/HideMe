@@ -3,7 +3,7 @@
 
     <groupId>de.cubeisland</groupId>
     <artifactId>HideMe</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <name>HideMe</name>
     <url>http://cubeisland.de</url>
     <packaging>jar</packaging>
@@ -37,22 +37,23 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>[1.3.1-R2.0,)</version>
+            <version>1.4.5-R0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>[1.3.1-R2.0,)</version>
+            <version>1.4.5-R0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
-            <version>[1.3.2,)</version>
+            <version>1.4.5</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>HideMe</finalName>
+        <defaultGoal>clean install</defaultGoal>
         <resources>
             <resource>
                 <targetPath>.</targetPath>

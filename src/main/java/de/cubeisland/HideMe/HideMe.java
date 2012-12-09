@@ -7,59 +7,104 @@ import de.cubeisland.HideMe.commands.ListhiddensCommand;
 import de.cubeisland.HideMe.commands.ListseehiddensCommand;
 import de.cubeisland.HideMe.commands.SeehiddensCommand;
 import de.cubeisland.HideMe.commands.UnhideCommand;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class HideMe extends JavaPlugin
 {
-    private static Logger logger = null;
-    public static boolean debugMode = true;
+    private static Logger  logger    = null;
+    public static  boolean debugMode = true;
 
     public final Set<Player> hiddenPlayers = Collections.synchronizedSet(new HashSet<Player>());
     public final Set<Player> canSeeHiddens = Collections.synchronizedSet(new HashSet<Player>());
-    
-    public Server server;
-    private ServerConfigurationManager mojangServer;
-    private PluginManager pm;
+
+    public Field entityField;
+    public  Server server;
+    private List   players;
 
     public HideMe()
-    {}
+    {
+    }
 
     @Override
     public void onEnable()
     {
         logger = this.getLogger();
         this.server = this.getServer();
-        this.mojangServer = ((CraftServer)this.server).getHandle();
-        this.pm = this.server.getPluginManager();
-        
-        try
+        PluginManager pm = this.server.getPluginManager();
+        Class serverClass = this.server.getClass();
+        if (!serverClass.getSimpleName().equals("CraftServer"))
         {
-            Player.class.getDeclaredMethod("hidePlayer", Player.class);
-        }
-        catch (NoSuchMethodException e)
-        {
-            log("Your CraftBukkit build is too old.");
-            log("HideMe detected that you're using a build without Vanish API");
+            log("Your Bukkit server is not compatible with HideMe!.");
             log("HideMe will now disable itself...");
-            this.pm.disablePlugin(this);
+            pm.disablePlugin(this);
             return;
         }
-        catch (SecurityException e)
-        {}
+
+        try
+        {
+            String craftEntityClassName = "org.bukkit.craftbukkit.entity.CraftEntity";
+            Matcher mcVersionMatcher = Pattern.compile("\\.v(\\d_\\d(_\\d)?)\\.").matcher(serverClass.getName());
+            if (mcVersionMatcher.find())
+            {
+                log("Loading classes for Minecraft version " + mcVersionMatcher.group(1).replace('_', '.'));
+                craftEntityClassName = craftEntityClassName.replace("craftbukkit.", "craftbukkit.v" + mcVersionMatcher.group(1) + ".");
+            }
+
+            debug("entity class name: " + craftEntityClassName);
+            this.entityField = Class.forName(craftEntityClassName).getDeclaredField("entity");
+            this.entityField.setAccessible(true);
+            if (!this.entityField.getType().getName().startsWith("net.minecraft.server") && !this.entityField.getType().getSimpleName().equals("Entity"))
+            {
+                throw new NoSuchFieldException();
+            }
+
+            Player.class.getDeclaredMethod("hidePlayer", Player.class);
+            Field field = serverClass.getDeclaredField("server");
+            field.setAccessible(true);
+            Object server = field.get(this.server);
+            if (!server.getClass().getSimpleName().equals("ServerConfigurationManager"))
+            {
+                throw new NoSuchFieldException();
+            }
+            serverClass = server.getClass();
+            try
+            {
+                field = serverClass.getDeclaredField("players");
+            }
+            catch (NoSuchFieldException e)
+            {
+                field = serverClass.getSuperclass().getDeclaredField("players");
+            }
+            field.setAccessible(true);
+            if (!List.class.isAssignableFrom(field.getType()))
+            {
+                throw new NoSuchFieldException();
+            }
+            this.players = (List)field.get(server);
+        }
+        catch (Exception e)
+        {
+            this.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e);
+            log("Your CraftBukkit build is incompatible!");
+            log("HideMe will now disable itself...");
+            pm.disablePlugin(this);
+            return;
+        }
 
         this.getCommand("hide").setExecutor(new HideCommand(this));
         this.getCommand("unhide").setExecutor(new UnhideCommand(this));
@@ -71,7 +116,7 @@ public class HideMe extends JavaPlugin
 
         HideMePlayerListener playerListener = new HideMePlayerListener(this);
         
-        this.pm.registerEvents(playerListener, this);
+        pm.registerEvents(playerListener, this);
 
         log("Version " + this.getDescription().getVersion() + " is now enabled");
     }
@@ -79,6 +124,8 @@ public class HideMe extends JavaPlugin
     @Override
     public void onDisable()
     {
+        this.entityField = null;
+        this.players = null;
         log("Version " + this.getDescription().getVersion() + " is now disabled");
     }
 
@@ -183,13 +230,21 @@ public class HideMe extends JavaPlugin
 
     public void addPlayerToList(final Player player)
     {
-        this.mojangServer.players.add(((CraftPlayer)player).getHandle());
+        try
+        {
+            this.players.add(entityField.get(player));
+        }
+        catch (IllegalAccessException ignored)
+        {}
     }
 
     public void removePlayerFromList(final Player player)
     {
-        this.mojangServer.players.remove(((CraftPlayer)player).getHandle());
+        try
+        {
+            this.players.remove(entityField.get(player));
+        }
+        catch (IllegalAccessException ignored)
+        {}
     }
-
-
 }
